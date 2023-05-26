@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "server.name" . | quote }}
+  labels:
+    {{- include "server.labels" . | nindent 4 }}
+  annotations:
+    {{- include "server.annotations" . | nindent 4 }}
+data:
+  APP_NAME: {{ .Chart.Name | quote }}
+  JAVA_OPTS: {{ .Values.server.config.javaOpts | quote }}
+  SPRING_DATASOURCE_URL: jdbc:postgresql://{{ .Values.server.postgres.host }}:{{ .Values.server.postgres.port }}/{{ .Values.server.postgres.database }}?ApplicationName={{ .Values.server.postgres.serviceName }}&prepareThreshold={{ .Values.server.postgres.prepareThreshold }}
+  SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+  SWAGGER_CONFIG_CONTEXT_PATH: {{ .Values.server.config.swagger.contextPath | quote }}
+
+  SPRING_ZIPKIN_BASEURL: {{ .Values.server.config.spring.zipkin.baseUrl | quote }}
+  SPRING_SLEUTH_SAMPLER_PROBABILITY: {{ .Values.server.config.spring.sleuth.samplerProbability | quote }}
+  SPRING_SLEUTH_WEB_SKIP_PATTERN: {{ .Values.server.config.spring.sleuth.skipPattern | quote }}
+
+  MANAGEMENT_HEALTH_ELASTICSEARCH_ENABLED: {{ .Values.server.config.management.health.elasticsearch.enabled | quote }}
+  MANAGEMENT_ENDPOINT_METRICS_ENABLED: {{ .Values.server.config.management.metrics.enabled | quote }}
+  MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED: {{ .Values.server.config.management.metrics.exportPrometheusEnabled | quote }}
+  MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED: {{ .Values.server.config.management.endpoints.prometheus.enabled | quote }}
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: {{ .Values.server.config.management.endpoints.webExposureInclude | quote }}
+  MANAGEMENT_ENDPOINTS_HEALTH_SHOW_DETAILS: {{ .Values.server.config.management.endpoints.healthShowDetails | quote }}
+  {{- if .Values.server.config.management.metrics.webServerMaxUriTags }}
+  MANAGEMENT_METRICS_WEB_SERVER_MAX_URI_TAGS: {{ .Values.server.config.management.metrics.webServerMaxUriTags | quote }}
+  {{- end }}
+
+  SPRING_KAFKA_CONSUMER_GROUP_ID: {{ .Values.server.config.spring.kafka.groupId | quote }}
+  SPRING_KAFKA_PRODUCER_CLIENT_ID: {{ .Values.server.config.spring.kafka.producerClientId | quote }}
+  SPRING_KAFKA_BOOTSTRAP_SERVERS: {{ .Values.server.config.spring.kafka.bootstrapServers | quote }}
+  SPRING_KAFKA_CONSUMER_CLIENT_ID: {{ .Values.server.config.spring.kafka.consumerClientId | quote }}
+
+  # kafka connection config
+  {{- if .Values.server.config.spring.kafka.security.protocol }}
+  SPRING_KAFKA_SECURITY_PROTOCOL: {{ .Values.server.config.spring.kafka.security.protocol | quote }}
+  SPRING_KAFKA_PROPERTIES_SECURITY_PROTOCOL: {{ .Values.server.config.spring.kafka.security.protocol | quote }}
+  {{- end }}
+  {{- if .Values.server.config.spring.kafka.security.saslProperties.mechanism }}
+  SPRING_KAFKA_CONSUMER_PROPERTIES_SASL_MECHANISM: {{ .Values.server.config.spring.kafka.security.saslProperties.mechanism | quote }}
+  SPRING_KAFKA_PRODUCER_PROPERTIES_SASL_MECHANISM: {{ .Values.server.config.spring.kafka.security.saslProperties.mechanism | quote }}
+  {{- end }}
+
+  {{- if .Values.server.config.spring.app.prefix }}
+  SPRING_APP_PREFIX: {{ .Values.server.config.spring.app.prefix | quote }}
+  {{- end }}
+  {{- if .Values.server.config.kazanexpress.kafka.suffix }}
+  KAZANEXPRESS_KAFKA_SUFFIX: {{ .Values.server.config.kazanexpress.kafka.suffix | quote }}
+  {{- end }}
+

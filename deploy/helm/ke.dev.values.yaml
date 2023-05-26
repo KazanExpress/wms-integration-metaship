@@ -1,0 +1,36 @@
+server:
+  replicas: 1
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+    limits:
+      cpu: 600m
+      memory: 768Mi
+
+  postgres:
+    host: wms-db-master.dev.ke.internal
+
+  config:
+    # xmx must be lower than memory limit by 10-20%
+    javaOpts: -Xmx600m
+    spring:
+      app:
+        prefix: dev-
+      kafka:
+        producerClientId: dev-${HOSTNAME}
+        consumerClientId: dev-${HOSTNAME}
+        bootstrapServers: kafka-proxy-mcs-server.svc-internal-kafka-proxy:6667
+      sleuth:
+        samplerProbability: 1
+    kazanexpress:
+      kafka:
+        suffix: _test
+    wms:
+      oauth2:
+        enableAuthentication: true
+        tokenServiceAddress: http://wms-account
+        authorization:
+          accessTokenValidity: '86400'
+          refreshTokenValidity: '864000'

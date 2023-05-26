@@ -1,0 +1,21 @@
+server:
+  config:
+    wms:
+      deliveryPoint:
+        suffix: KazanExpress
+      phoneLength: 10
+    spring:
+      zipkin:
+        baseUrl: http://zipkin-collector.ke.internal:9411
+
+  ingress:
+    enabled: false
+
+  nodeSelector:
+    app_type: apps
+
+  tolerations:
+    - key: app_type
+      effect: NoSchedule
+      operator: Equal
+      value: apps

@@ -1,0 +1,14 @@
+server:
+  config:
+    spring:
+      zipkin:
+        baseUrl: http://zipkin-collector.um.internal:9411
+      kafka:
+        security:
+          protocol: SASL_PLAINTEXT
+          saslProperties:
+            mechanism: SCRAM-SHA-512
+            jaasConfig: org.apache.kafka.common.security.scram.ScramLoginModule required username="%username%" password="%password%";
+
+  ingress:
+    enabled: true

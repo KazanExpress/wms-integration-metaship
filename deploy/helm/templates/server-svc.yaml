@@ -1,0 +1,23 @@
+{{- if .Values.server.service.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  {{- if .Values.server.service.nameOverride }}
+  name: {{ .Values.server.service.nameOverride | quote }}
+  {{- else }}
+  name: {{ include "server.name" . | quote }}
+  {{- end }}
+  labels:
+    {{- include "server.labels" . | nindent 4 }}
+  annotations:
+    {{- include "server.annotations" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "server.selector" . | nindent 4 }}
+  ports:
+    - name: "http"
+      port: {{ .Values.server.api.port.external }}
+      targetPort: {{ .Values.server.api.port.internal }}
+      protocol: "TCP"
+{{- end }}

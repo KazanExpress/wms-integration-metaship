@@ -1,0 +1,6 @@
+kind: template
+load: common_wms_service_jdk17.yaml
+data:
+  chart_name: wms-common-chart
+  chart_version: 0.1.1  
+  service_name: wms-integration-metaship
