@@ -13,7 +13,7 @@
 
     <groupId>com.kazanexpress.microservice.wms-integration-metaship</groupId>
     <artifactId>parent</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
 
     <scm>
         <connection>scm:git:git@github.com:KazanExpress/wms-integration-metaship.git</connection>

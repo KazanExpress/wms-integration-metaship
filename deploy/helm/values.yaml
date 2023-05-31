@@ -46,61 +46,15 @@ server:
     host: ""
 
   config:
-    endpoints:
-      delivery: wms-delivery
     debug: true
     logger:
       level: info
-    # xmx must be lower than memory limit by 10-20%
+    # xmx must be lower than memory limit
     javaOpts: -Xmx866m
-    redis:
-      keyPrefix: test
-    swagger:
-      contextPath: /metaship
-    spring:
-      app:
-        prefix: ~
-      zipkin:
-        baseUrl: http://zipkin.monitoring.svc.cluster.local:9411
-      kafka:
-        producerClientId: wms-integration-metaship-0
-        consumerClientId: dev-${HOSTNAME}
-        bootstrapServers: kafka-dataflow-worker-hdf-v34-1-0.novalocal:6667
-        groupId: wms-integration-metaship-0
-        clientId: wms-integration-metaship-0
-        user: ""
-        password: "" 
-        security:
-          protocol: "" # SASL_PLAINTEXT
-          saslProperties:
-            mechanism: "" # SCRAM-SHA-512
-            jaasConfig: "" #org.apache.kafka.common.security.scram.ScramLoginModule required username="%username%" password="%password%";
-      sleuth:
-        samplerProbability: '1'
-        skipPattern: /api-docs.*|/swagger.*|.*\\.png|.*\\.css|.*\\.js|.*\\.html|/favicon.ico|/hystrix.stream|/v2/api-docs
-    kazanexpress:
-      kafka:
-        suffix: ~
-    wms:
-      oauth2:
-        enableAuthentication: true
-        tokenServiceAddress: http://wms-account
-        authorization:
-          accessTokenValidity: '86400'
-          refreshTokenValidity: '864000'
-    management:
-      health:
-        elasticsearch:
-          enabled: false
-      endpoints:
-        healthShowDetails: "ALWAYS"
-        webExposureInclude: "*"
-        prometheus:
-          enabled: true
-      metrics:
-        enabled: true
-        exportPrometheusEnabled: true
-        webServerMaxUriTags: ~
+
+    env:
+      configMap: {}
+      secret: {}
 
   # API configuration.
   api:
@@ -131,7 +85,7 @@ server:
     # Metric scrape interval.
     interval: 30s
     # Scrape request path.
-    path: /actuator/prometheus
+    path: /metaship/actuator/prometheus
     # Scrape request timeout.
     scrapeTimeout: 5s
     # HonorLabels chooses the metric’s labels on collisions with target labels.
@@ -139,13 +93,13 @@ server:
     # Additional monitoring labels.
     additionalLabels:
       prometheus: daily-prometheus
-      # prometheus: default # for yandex
+      # prometheus: default
 
   # Probes configuration.
   probes:
     readiness:
       httpGet:
-        path: /actuator/health
+        path: /metaship/actuator/health
         port: 8080
       periodSeconds: 5
       successThreshold: 3
@@ -154,7 +108,7 @@ server:
     liveness:
       httpGet:
         port: 8080
-        path: /actuator/health/diskSpace
+        path: /metaship/actuator/health/diskSpace
       #        path: /actuator/health
       initialDelaySeconds: 180
       timeoutSeconds: 1

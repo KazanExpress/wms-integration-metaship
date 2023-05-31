@@ -4,33 +4,34 @@ server:
   resources:
     requests:
       cpu: 100m
-      memory: 512Mi
     limits:
       cpu: 600m
-      memory: 768Mi
 
   postgres:
     host: wms-db-master.dev.ke.internal
 
   config:
-    # xmx must be lower than memory limit by 10-20%
     javaOpts: -Xmx600m
-    spring:
-      app:
-        prefix: dev-
-      kafka:
-        producerClientId: dev-${HOSTNAME}
-        consumerClientId: dev-${HOSTNAME}
-        bootstrapServers: kafka-proxy-mcs-server.svc-internal-kafka-proxy:6667
-      sleuth:
-        samplerProbability: 1
-    kazanexpress:
-      kafka:
-        suffix: _test
-    wms:
-      oauth2:
-        enableAuthentication: true
-        tokenServiceAddress: http://wms-account
-        authorization:
-          accessTokenValidity: '86400'
-          refreshTokenValidity: '864000'
+    profiles: ke-dev
+
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.allow-http: "false"
+      kubernetes.io/tls-acme: "true"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/affinity: "cookie"
+      nginx.ingress.kubernetes.io/session-cookie-name: "route"
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    className: nginx
+    tls:
+      - hosts:
+          - wms-api.dev.cluster.kznexpess.com
+        secretName: wms-api-dev-ssl
+    rules:
+      - host: wms-api.dev.cluster.kznexpess.com
+        paths:
+          - path: /metaship
+            pathType: ImplementationSpecific
+            port: 80
+

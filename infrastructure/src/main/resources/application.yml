@@ -1,26 +1,17 @@
-wms:
-  oauth2:
-    enable-authentication: true
-    token-service-address: "ACCOUNT SERVICE ADDRESS"
-    enable-worker-info-filter: true
-
 spring:
+  app:
+    prefix: ~
   datasource:
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${SPRING_DATASOURCE_HOST}:${SPRING_DATASOURCE_HOST}/${SPRING_DATASOURCE_DATABASE}?ApplicationName=${SPRING_DATASOURCE_SERVICE_NAME}&prepareThreshold=${SPRING_DATASOURCE_PREPARE_THRESHOLD}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driverClassName: org.postgresql.Driver
     type: com.zaxxer.hikari.HikariDataSource
-    username: "***USERNAME***"
-    password: "***PASSWORD***"
-    url: "***JDBC_URL***"
-    hikari:
-      data-source-properties: readOnlyMode=ignore
-
   kafka:
-    bootstrap-servers: "***URLs***"
     listener:
       ack-mode: manual_immediate
-      poll-timeout: 1s
     consumer:
-      group-id: "***GROUP_ID***"
+      group-id: wms-integration-metaship-0
       enable-auto-commit: false
       auto-offset-reset: earliest
       properties:
@@ -33,11 +24,11 @@ spring:
     producer:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       key-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      client-id: "***CLIENT_ID***"
+      client-id: wms-integration-metaship-0
       retries: 3
       properties:
         linger:
-          ms: 1_000
+          ms: 5
         max:
           block:
             ms: 5_000
@@ -53,12 +44,35 @@ spring:
     default-schema: public
     change-log: classpath:/db/changelog-master.xml
 
+mybatis:
+  mapper-locations: classpath*:dao/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+wms:
+  oauth2:
+    enable-authentication: true
+    token-service-address: http://wms-account
+    enable-worker-info-filter: true
+    authorization:
+      accessTokenValidity: '86400'
+      refreshTokenValidity: '259200'
 
 management:
-  endpoint:
-    health:
-      show-details: always
+  health:
+    elasticsearch:
+      enabled: false
   endpoints:
     web:
       exposure:
-        include: health,info,mappings
+        include: "*"
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  endpoint:
+    health:
+      show-details: always
+server:
+  servlet:
+    context-path: /metaship

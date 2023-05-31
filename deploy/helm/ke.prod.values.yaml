@@ -4,33 +4,15 @@ server:
   resources:
     requests:
       cpu: 400m
-      memory: 512Mi
     limits:
       cpu: 700m
-      memory: 1Gi
 
   postgres:
     host: wms-db-master.prod.ke.internal
 
   config:
-    # xmx must be lower than memory limit by 10-20%
     javaOpts: -Xmx866m
-    spring:
-      kafka:
-        producerClientId: prod-${HOSTNAME}
-        consumerClientId: prod-${HOSTNAME}
-        bootstrapServers: kafka-proxy-mcs-server.svc-internal-kafka-proxy:6667
-      sleuth:
-        samplerProbability: '0.1'
-      feign:
-        readTimeout: '60000'
-    wms:
-      oauth2:
-        enableAuthentication: false
-        tokenServiceAddress: http://wms-account
-        authorization:
-          accessTokenValidity: '86400'
-          refreshTokenValidity: '259200'
+    profiles: ke-prod
 
   monitoring:
     additionalLabels:
