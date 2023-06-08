@@ -1,0 +1,19 @@
+server:
+  replicas: 2
+
+  resources:
+    requests:
+      cpu: 400m
+    limits:
+      cpu: 700m
+
+  postgres:
+    host: wms-db-master.prod.ke.internal
+
+  config:
+    javaOpts: -Xmx866m
+    profiles: ke-prod
+
+  monitoring:
+    additionalLabels:
+      prometheus: default

@@ -1,0 +1,78 @@
+spring:
+  app:
+    prefix: ~
+  datasource:
+    url: jdbc:postgresql://${SPRING_DATASOURCE_HOST}:${SPRING_DATASOURCE_HOST}/${SPRING_DATASOURCE_DATABASE}?ApplicationName=${SPRING_DATASOURCE_SERVICE_NAME}&prepareThreshold=${SPRING_DATASOURCE_PREPARE_THRESHOLD}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driverClassName: org.postgresql.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+  kafka:
+    listener:
+      ack-mode: manual_immediate
+    consumer:
+      group-id: wms-integration-metaship-0
+      enable-auto-commit: false
+      auto-offset-reset: earliest
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: "*"
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      key-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      key-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      client-id: wms-integration-metaship-0
+      retries: 3
+      properties:
+        linger:
+          ms: 5
+        max:
+          block:
+            ms: 5_000
+        request:
+          timeout:
+            ms: 30_000
+        reconnect:
+          backoff:
+            max:
+              ms: 5_000
+  liquibase:
+    enabled: true
+    default-schema: public
+    change-log: classpath:/db/changelog-master.xml
+
+mybatis:
+  mapper-locations: classpath*:dao/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+wms:
+  oauth2:
+    enable-authentication: true
+    token-service-address: http://wms-account
+    enable-worker-info-filter: true
+    authorization:
+      accessTokenValidity: '86400'
+      refreshTokenValidity: '259200'
+
+management:
+  health:
+    elasticsearch:
+      enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  endpoint:
+    health:
+      show-details: always
+server:
+  servlet:
+    context-path: /metaship

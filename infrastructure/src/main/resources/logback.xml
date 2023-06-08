@@ -1,0 +1,36 @@
+<configuration>
+    <if condition='"${spring.profiles.active}".contains("debug")'>
+        <then>
+            <include resource="org/springframework/boot/logging/logback/base.xml"/>
+        </then>
+        <else>
+            <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+                <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+                    <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+                        <exclude>sun\.reflect\..*\.invoke.*</exclude>
+                        <exclude>net\.sf\.cglib\.proxy\.MethodProxy\.invoke</exclude>
+                        <exclude>org\.springframework\.cglib\.proxy\.MethodProxy\.invoke</exclude>
+                        <exclude>org\.springframework\.aop\..*\.intercept.*</exclude>
+                        <exclude>org\.springframework\.web\.servlet.*</exclude>
+                        <exclude>org\.springframework\.web\.method.*</exclude>
+                        <exclude>jdk\.internal\.reflect\..*\.invoke.*</exclude>
+                        <exclude>org\.apache\.catalina\..*\.invoke.*</exclude>
+                        <exclude>java\.lang\.reflect\..*\.invoke.*</exclude>
+                        <exclude>org\.springframework\.aop\..*</exclude>
+                        <exclude>org\.springframework\.cglib\..*</exclude>
+                        <exclude>com\.fasterxml\.jackson\.databind\..*</exclude>
+                        <exclude>org\.springframework\..*\.doFilter.*</exclude>
+                        <exclude>org\.apache\.catalina\..*</exclude>
+                        <exclude>org\.apache\.coyote\..*</exclude>
+                    </throwableConverter>
+                </encoder>
+            </appender>
+            <logger name="jsonLogger" additivity="false" level="DEBUG">
+                <appender-ref ref="consoleAppender"/>
+            </logger>
+            <root level="INFO">
+                <appender-ref ref="consoleAppender"/>
+            </root>
+        </else>
+    </if>
+</configuration>

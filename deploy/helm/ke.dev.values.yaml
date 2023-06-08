@@ -1,0 +1,37 @@
+server:
+  replicas: 1
+
+  resources:
+    requests:
+      cpu: 100m
+    limits:
+      cpu: 600m
+
+  postgres:
+    host: wms-db-master.dev.ke.internal
+
+  config:
+    javaOpts: -Xmx600m
+    profiles: ke-dev
+
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.allow-http: "false"
+      kubernetes.io/tls-acme: "true"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/affinity: "cookie"
+      nginx.ingress.kubernetes.io/session-cookie-name: "route"
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    className: nginx
+    tls:
+      - hosts:
+          - wms-api.dev.cluster.kznexpess.com
+        secretName: wms-api-dev-ssl
+    rules:
+      - host: wms-api.dev.cluster.kznexpess.com
+        paths:
+          - path: /metaship
+            pathType: ImplementationSpecific
+            port: 80
+
