@@ -44,6 +44,28 @@ spring:
     default-schema: public
     change-log: classpath:/db/changelog-master.xml
 
+  security:
+    oauth2:
+      client:
+        registration:
+          metaship:
+            client-id: ${METASHIP_CLIENT_ID:f775e850-1fe1-4f51-a9a1-d03da5ccf823}
+            client-secret: ${METASHIP_CLIENT_SECRET:aa9f8bbb67350386cc9d5274ec4610e7b692a509bfe186f51bf8375fb18ef45d3ecf205cd519d13d}
+            authorization-grant-type: client_credentials
+            client-authentication-method: client_secret_post
+            provider: metaship
+        provider:
+          metaship:
+            token-uri: ${METASHIP_ACCESS_TOKEN_URI:https://api.metaship.ru/auth/access_token}
+
+feign:
+  oauth2:
+    enabled: true
+    clientRegistrationId: metaship
+
+metaship:
+  url: ${METASHIP_URL:https://api.metaship.ru}
+
 mybatis:
   mapper-locations: classpath*:dao/*.xml
   configuration:
